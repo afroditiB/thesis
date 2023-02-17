@@ -1,4 +1,4 @@
-Importing the necessary libraries for retreiving data and visualizing them 
+#Importing the necessary libraries for retreiving data and visualizing them 
 
 !pip install pymongo
 import pymongo
@@ -10,7 +10,7 @@ import numpy as np
 import seaborn as sns
 
 
-Using the below credentials to collect the necessary data, for current, power and voltage of each smart meter (Wi , i=2,3,..,6), and saving them into CSVs
+#Using the below credentials to collect the necessary data, for current, power and voltage of each smart meter (Wi , i=2,3,..,6), and saving them into CSVs
 
 
 db = MongoClient('131.154.97.22', 
@@ -34,7 +34,7 @@ print("Voltage Loaded")
 
 ###First we will preprocess Power data
 
-Splitting active, reactive power into two different dfs for every meter W2-W6 ans saving them into csvs
+#Splitting active, reactive power into two different dfs for every meter W2-W6 ans saving them into csvs
 
 power_w2=power_df[power_df['id']=='W2']
 power_w2_active = power_w2[power_w2["power_type"]=='positive_active']
@@ -104,7 +104,7 @@ power_w6_reactive.to_csv("power_w6_reactive.csv")
 
 
 
-Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, power_type) as by splitting the initial df into different dfs for each meter and for active, reactive power, we have already this information. 
+#Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, power_type) as by splitting the initial df into different dfs for each meter and for active, reactive power, we have already this information. 
 
 
 ## W2
@@ -208,7 +208,7 @@ power_w6_apparent = power_w6_apparent.stack(dropna=False)
 
 
 
-Convertime the resulted series type to  df again and reseting the index 
+#Converting the resulted series type to  df again and reseting the index 
 
 #W2
 power_w2_active=power_w2_active.to_frame()
@@ -279,7 +279,6 @@ power_w6_active['datetime']=pd.to_datetime(power_w6_active['date']+ " " + power_
 power_w6_reactive['datetime']=pd.to_datetime(power_w6_reactive['date']+ " " + power_w6_reactive['level_1'])
 power_w6_apparent['datetime']=pd.to_datetime(power_w6_apparent['date']+ " " + power_w6_apparent['level_1'])
 
-power_w6_apparent
 
 #w2
 power_w2_active.drop(["date","level_1"],axis=1,inplace=True)
@@ -331,7 +330,7 @@ power_w6_apparent=power_w6_apparent.rename(columns={0:"apparent"})
 
 
 
-Setting Datetime columns as index
+#Setting Datetime columns as index
 
 #w2
 power_w2_active = power_w2_active.set_index(['datetime'])
@@ -362,11 +361,7 @@ power_w6_active = power_w6_active.set_index(['datetime'])
 power_w6_reactive = power_w6_reactive.set_index(['datetime'])
 power_w6_apparent = power_w6_apparent.set_index(['datetime'])
 
-
-
-
-Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (1) has been inserted at sereral entries, probably by stacking, prior to the actual
- value
+#Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (1) has been inserted at sereral entries, probably by stacking, prior to the actual value
 
 power_w2_active[power_w2_active.duplicated()==True]
 
@@ -404,12 +399,8 @@ power_w6_apparent = power_w6_apparent.loc[~power_w6_apparent.index.duplicated(ke
 
 
 
-We create a function that takes a datetime indexed dataframe as input and returns a list with all the 5 minute interval dates from the start to the end of the dataframe's data and apply it to our power dataframe
+#We create a function that takes a datetime indexed dataframe as input and returns a list with all the 5 minute interval dates from the start to the end of the dataframe's data and apply it to our power dataframe
 .
-
-
-
-
 """
 def fill_missing_dates(df):
   
@@ -423,7 +414,7 @@ def fill_missing_dates(df):
   return df
 """
 
-We create a function that returns the current datatime
+#We create a function that returns the current datatime
 
 def bring_current_datetime():
   """
@@ -440,7 +431,7 @@ def bring_current_datetime():
   dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
   return dt_string
 
-We create a *fill_missing_dates* function that compares our df's index to a range from 01/07/2021 00:00:00 to the current datetime, and adds the missing datetimes to df's index while it fills these values with NaNs.
+#We create a *fill_missing_dates* function that compares our df's index to a range from 01/07/2021 00:00:00 to the current datetime, and adds the missing datetimes to df's index while it fills these values with NaNs.
 
 
 def fill_missing_dates(df):
@@ -454,7 +445,7 @@ def fill_missing_dates(df):
   df=df.reindex(dts)
   return df
 
-By applying fill_missing_dates function to every meter's dataframes we basically reindex our dataframes with the list created by the fill_missing_dates function. Any missing date will be filled with NaN values.
+#By applying fill_missing_dates function to every meter's dataframes we basically reindex our dataframes with the list created by the fill_missing_dates function. Any missing date will be filled with NaN values.
 
 #w2
 power_w2_active=fill_missing_dates(power_w2_active)
@@ -515,7 +506,7 @@ powerw6 = pd.concat([power_w6_active, power_w6_reactive], axis=1, join="inner")
 powerw6=pd.concat([powerw6,power_w6_apparent], axis=1, join="inner")
 powerw6=powerw6.rename(columns={"positive_active":"active_w6","positive_reactive":"reactive_w6","apparent":"apparent_w6"})
 
-Concatening all diferrent meter's power dfs to one **power** df, which will display reactive and active power for every smart meter and saving it into one csv file, named "power_total"
+#Concatening all diferrent meter's power dfs to one **power** df, which will display reactive and active power for every smart meter and saving it into one csv file, named "power_total"
 
 
 
@@ -529,8 +520,7 @@ power.to_csv("power_total.csv")
 
 ###We will now repeat for Current data
 
-
-Splitting each phase of current (1,2,3) into different dfs for every meter W2-W6
+#Splitting each phase of current (1,2,3) into different dfs for every meter W2-W6
 
 i_w2=current_df[current_df['id']=='W2']
 i_w2_phase1 = i_w2[i_w2["phase"]=='l1']
@@ -558,7 +548,7 @@ i_w6_phase2 = i_w6[i_w6["phase"]=="l2"]
 i_w6_phase3 =i_w6[i_w6["phase"]=="l3"]
 
 
-Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, phase) as by splitting the initial current df into different dfs for each meter and phase 1, phase 2, phase 3, we have already this information. 
+#Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, phase) as by splitting the initial current df into different dfs for each meter and phase 1, phase 2, phase 3, we have already this information. 
 
 
 #w2
@@ -609,7 +599,7 @@ i_w6_phase2.drop(["id","phase","_id"], axis=1,inplace=True)
 i_w6_phase3.drop(["id","phase","_id"], axis=1,inplace=True)
 
 
-Setting "date" column as index in order to apply the .stack function. By using .stack, we stack level 1 from columns to index. With the parameter "dropna = False " we keep the Nan values.
+#Setting "date" column as index in order to apply the .stack function. By using .stack, we stack level 1 from columns to index. With the parameter "dropna = False " we keep the Nan values.
 
 #w2
 i_w2_phase1 = i_w2_phase1.set_index("date")
@@ -657,7 +647,7 @@ i_w6_phase1 = i_w6_phase1.stack(dropna=False)
 i_w6_phase2 = i_w6_phase2.stack(dropna=False)
 i_w6_phase3 = i_w6_phase3.stack(dropna=False)
 
-Converting the resulted series type to  df again and reseting the index 
+#Converting the resulted series type to  df again and reseting the index 
 
 
 #w2
@@ -798,7 +788,7 @@ i_w6_phase2 = i_w6_phase2.set_index(['datetime'])
 i_w6_phase3 = i_w6_phase3.set_index(['datetime'])
 
 
-Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (0) has been inserted at sereral entries, probably by stacking, prior to the actual value
+#Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (0) has been inserted at sereral entries, probably by stacking, prior to the actual value
 
 i_w4_phase1[i_w4_phase1.duplicated()==True]
 i_w4_phase1["2022-10-20 00:00:00	"]
@@ -856,7 +846,7 @@ i_w6_phase2 = fill_missing_dates(i_w6_phase2)
 i_w6_phase3 = fill_missing_dates(i_w6_phase3)
 
 
-Concatenating each phase (1,2,3) for every smart meter into one i_meter df.:
+#Concatenating each phase (1,2,3) for every smart meter into one i_meter df.:
 
 #w2
 i_w2 = pd.concat([i_w2_phase1, i_w2_phase2], axis=1, join="inner")
@@ -879,7 +869,7 @@ i_w6 = pd.concat([i_w6_phase1, i_w6_phase2], axis=1, join="inner")
 i_w6 = pd.concat([i_w6, i_w6_phase3], axis=1, join="inner")
 
 
-Concatening all diferrent meter's power dfs to one current df, which will display every current phase for every smart meter
+#Concatening all diferrent meter's power dfs to one current df, which will display every current phase for every smart meter
 
 current = pd.concat([i_w2, i_w3], axis=1, join="inner")
 current = pd.concat([i_w4, current], axis=1, join="inner")
@@ -893,7 +883,7 @@ current.to_csv("current_total.csv")
 ###Lastly, we will deal with voltage Data
 
 
-Splitting each phase of voltage (1,2,3) into different dfs for every meter W2-W6
+#Splitting each phase of voltage (1,2,3) into different dfs for every meter W2-W6
 
 #W2
 v_w2=voltage_df[voltage_df['id']=='W2']
@@ -926,7 +916,7 @@ v_w6_phase2 = v_w6[v_w6["voltage_type"]=="u2"]
 v_w6_phase3 =v_w6[v_w6["voltage_type"]=="u3"]
 
 
-Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, voltage_type) as by splitting the initial df into different dfs for each meter and for each phase, we have already this information.
+#Dropping the uncnecessary columns for every meter's df (Unnamed: 0, Unnamed, 2, id, voltage_type) as by splitting the initial df into different dfs for each meter and for each phase, we have already this information.
 
 #w2
 v_w2_phase1.drop(v_w2_phase1.filter(regex="Unname"),axis=1, inplace=True)
@@ -975,7 +965,7 @@ v_w6_phase1.drop(["id","voltage_type","_id"], axis=1,inplace=True)
 v_w6_phase2.drop(["id","voltage_type","_id"], axis=1,inplace=True)
 v_w6_phase3.drop(["id","voltage_type","_id"], axis=1,inplace=True)
 
-Setting "date" column as index in order to apply the .stack function. By using .stack, we stack level 1 from columns to index. With the parameter "dropna = False " we keep the Nan values.
+#Setting "date" column as index in order to apply the .stack function. By using .stack, we stack level 1 from columns to index. With the parameter "dropna = False " we keep the Nan values.
 
 #w2
 v_w2_phase1 = v_w2_phase1.set_index("date")
@@ -1022,7 +1012,7 @@ v_w6_phase1 = v_w6_phase1.stack(dropna=False)
 v_w6_phase2 = v_w6_phase2.stack(dropna=False)
 v_w6_phase3 = v_w6_phase3.stack(dropna=False)
 
-Converting the resulted series type to df again and reseting the index
+#Converting the resulted series type to df again and reseting the index
 
 #w2
 v_w2_phase1 = v_w2_phase1.to_frame()
@@ -1073,7 +1063,7 @@ v_w6_phase2 = v_w6_phase2.reset_index()
 v_w6_phase3 = v_w6_phase3.reset_index()
 
 
-Combining date & time into datetime column and setting this as index.
+#Combining date & time into datetime column and setting this as index.
 
 #w2
 v_w2_phase1['datetime']=pd.to_datetime(v_w2_phase1['date']+ " " + v_w2_phase1['level_1'])
@@ -1163,7 +1153,7 @@ v_w6_phase1 = v_w6_phase1.set_index(['datetime'])
 v_w6_phase2 = v_w6_phase2.set_index(['datetime'])
 v_w6_phase3 = v_w6_phase3.set_index(['datetime'])
 
-Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (0) has been inserted at sereral entries, probably by stacking, prior to the actual value
+#Dropping duplicate values, by keeping the last of them, as we have seen that an extra value (0) has been inserted at sereral entries, probably by stacking, prior to the actual value
 
 v_w2_phase1[v_w2_phase1.duplicated()==True]
 v_w2_phase1["2021-08-13 00:00:00"]
@@ -1218,7 +1208,7 @@ v_w6_phase2 = fill_missing_dates(v_w6_phase2)
 v_w6_phase3 = fill_missing_dates(v_w6_phase3)
 
 
-Concatenating each phase (1,2,3) for every smart meter into one i_meter df.:
+#Concatenating each phase (1,2,3) for every smart meter into one i_meter df.:
 
 #w2
 v_w2 = pd.concat([v_w2_phase1, v_w2_phase2], axis=1, join="inner")
@@ -1254,9 +1244,6 @@ voltage.to_csv("voltage_total.csv")
 
 from datetime import date
 import calendar
-
-
-power_w2
 
 #w2
 power_w2=power[["active_w2","reactive_w2"]].reset_index()
@@ -1295,8 +1282,6 @@ power_w5['month']=power_w5.index.month
 power_w5['hour_of_day']=power_w5.index.hour
 power_w5['year']=power_w5.index.year
 
-
-
 #w6
 power_w6=power[["active_w6","reactive_w6"]].reset_index()
 power_w6["weekday"] =pd.DatetimeIndex(power_w6['index']).day_name()
@@ -1305,9 +1290,6 @@ power_w6['day_of_month']=power_w6.index.day
 power_w6['month']=power_w6.index.month
 power_w6['hour_of_day']=power_w6.index.hour
 power_w6['year']=power_w6.index.year
-
-
-
 
 ### Current
 #w2
@@ -1360,10 +1342,6 @@ i__w6['month']=i__w6.index.month
 i__w6['hour_of_day']=i__w6.index.hour
 i__w6['year']=i__w6.index.year
 
-
-
-
-
 ##Voltage
 #w2
 v__w2 =voltage[['w2_u1','w2_u2','w2_u3']].reset_index()
@@ -1374,7 +1352,6 @@ v__w2['month']=v__w2.index.month
 v__w2['hour_of_day']=v__w2.index.hour
 v__w2['year']=v__w2.index.year
 
-
 #w3
 v__w3 =voltage[['w3_u1','w3_u2','w3_u3']].reset_index()
 v__w3["weekday"]=pd.DatetimeIndex(v__w3['index']).day_name()
@@ -1383,8 +1360,6 @@ v__w3['day_of_month']=v__w3.index.day
 v__w3['month']=v__w3.index.month
 v__w3['hour_of_day']=v__w3.index.hour
 v__w3['year']=v__w3.index.year
-
-
 
 #w4
 v__w4 =voltage[['w4_u1',"w4_u2","w4_u3"]].reset_index()
@@ -1395,7 +1370,6 @@ v__w4['month']=v__w4.index.month
 v__w4['hour_of_day']=v__w4.index.hour
 v__w4['year']=v__w4.index.year
 
-
 #w5
 v__w5 =voltage[['w5_u1',"w5_u2","w5_u3"]].reset_index()
 v__w5["weekday"] =pd.DatetimeIndex(v__w5['index']).day_name()
@@ -1404,7 +1378,6 @@ v__w5['day_of_month']=v__w5.index.day
 v__w5['month']=v__w5.index.month
 v__w5['hour_of_day']=v__w5.index.hour
 v__w5['year']=v__w5.index.year
-
 
 #w6
 v__w6 =voltage[['w6_u1',"w6_u2","w6_u3"]].reset_index()
@@ -1415,7 +1388,7 @@ v__w6['month']=v__w6.index.month
 v__w6['hour_of_day']=v__w6.index.hour
 v__w6['year']=v__w6.index.year
 
-Concatenaning each meter's df to one in order to make separate dfs for current, power and voltage with the additional columns
+#Concatenaning each meter's df to one in order to make separate dfs for current, power and voltage with the additional columns
 
 
 ## Current
@@ -1428,7 +1401,6 @@ current_dt['hour_of_day']=current_dt.index.hour
 current_dt['year']=current_dt.index.year
 
 
-
 current_dt.to_csv("current_dt.csv")
 
 ##Voltage
@@ -1439,7 +1411,6 @@ voltage_dt['day_of_month']=voltage_dt.index.day
 voltage_dt['month']=voltage_dt.index.month
 voltage_dt['hour_of_day']=voltage_dt.index.hour
 voltage_dt['year']=voltage_dt.index.year
-
 
 voltage_dt.to_csv("voltage_dt.csv")
 
