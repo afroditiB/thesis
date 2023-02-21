@@ -417,10 +417,6 @@ backtest_series = backtest_dict.get("backtest_series")
 
 backtest_metrics = backtest_dict.get("metrics")
 
-x=list()
-for value in backtest_metrics.values():
-        print(value)
-
 plt.plot(backtest_series.pd_dataframe()['2022-06-22 00:00:00':'2022-06-25 00:00:00'], label = 'forecast')
 plt.plot(series.pd_dataframe()['2022-06-22 00:00:00':'2022-06-25 00:00:00'], label='pv power')
 
@@ -506,20 +502,3 @@ model = lgb.train(params,train_set=lgb_train,
 y_pred = model.predict(x_test)
 
 eval_model(y_test,y_pred)
-
-smape :  12.147402643955441
-mase :  0.5005006770229922
-mae :  7.0176793698072695
-rmse :  13.519056446763463
-mse :  182.76488721077672
-mape :  13.953193162198321
-
-smape :  8.25590757149168
-mase :  0.8294551759012971
-mae :  5.745340987211225
-rmse :  8.830907286083095
-mse :  77.98492349539549
-mape :  8.464740197834944
-
-series = convert_to_timeseries(current,['w6_phase1'],'60min')
-series = abs(series)
