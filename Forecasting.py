@@ -251,7 +251,7 @@ def backtester_final(model,
     ax2.set_title(
         f'Weekly forecast, Start date: {forecast_start_date}, Forecast horizon (timesteps): {forecast_horizon}, Forecast extended with backtesting...')
 
-    # Metrix
+    # Metrics
     test_series =  series.drop_before(pd.Timestamp(pd.Timestamp(
         test_start_date) - datetime.timedelta(hours=1)))
     
